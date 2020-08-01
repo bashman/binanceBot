@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <Main />
-  </div>
+    <v-app>
+
+      <Main />
+    </v-app>
 </template>
 
 <script>

@@ -1,9 +1,23 @@
 <template>
-    <div v-if="dataCollection" class="chartContainer">
-
+    <v-container v-if="dataCollection" >
         <LineChart :chart-data="dataCollection" :options="{responsive: true, maintainAspectRatio: false}"/>
+        
+        <v-row>
+            <v-col>
+                <v-radio-group v-model="chartCurrency">
+                    <v-radio
+                        label="BTC"
+                        value="BTC"
+                    ></v-radio>
+                    <v-radio
+                        label="USD"
+                        value="USD"
+                    ></v-radio>
+                </v-radio-group>
+            </v-col>
+        </v-row>
 
-    </div>
+    </v-container >
 </template>
 
 <script>
@@ -19,13 +33,7 @@ export default {
         return {
             balanceData: null,
             dataCollection: null,
-            dataCollection2: {
-                labels:[1,2],
-                datasets: [{
-                    label:'stupid',
-                    data:[1,2]
-                }]
-            }
+            chartCurrency: 'BTC'
         }
     },
     async created() {
@@ -48,7 +56,7 @@ export default {
             let newData = {
                 labels:[],
                 datasets: [{
-                    label: 'Balance USD',
+                    label: `Balance ${this.chartCurrency}`,
                     backgroundColor: '#f87979',
                     data: []
                 }]
@@ -56,10 +64,21 @@ export default {
 
             this.balanceData.forEach(balances => {
                 newData.labels.push(moment.utc(balances.createdAt).local().format('MMM Do YY'));
-                newData.datasets[0].data.push(Math.round(balances.balanceUSD));
+
+
+                if (this.chartCurrency === 'BTC') {
+                    newData.datasets[0].data.push(Math.round(1000 * balances.balanceBTC) / 1000);
+                } else {
+                    newData.datasets[0].data.push(Math.round(balances.balanceUSD));
+                }
             })
 
             this.dataCollection = newData;
+        }
+    },
+    watch: {
+        chartCurrency() {
+            this.structureChartData();
         }
     }
 }
