@@ -127,10 +127,9 @@ const calcBalance = async (balances) => {
 }
 
 const runScript = () => {
-    schedule.scheduleJob('* * * * *', function(){
+    schedule.scheduleJob('0 */2 * * *', function(){
 
         balanceData();
-        // console.log('here')
 
       });
 }

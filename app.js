@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const app = express();
 const bodyParser = require('body-parser');
+var cors = require('cors')
 
 const balanceData = require('./server/scripts/balanceData');
 
@@ -15,8 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // router imports
-const userRouter = require('./server/routes/user.router')
+const userRouter = require('./server/routes/balance.router')
 
+app.use(cors())
 
 /* Routes */
 app.use('/api/user', userRouter);
@@ -39,7 +41,7 @@ const dbConnect = async () => {
 
     balanceData();
 
-    
+
     const connOptions = {
       useNewUrlParser: true,
       useUnifiedTopology: true
