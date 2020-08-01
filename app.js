@@ -29,7 +29,7 @@ app.use('/api/user', userRouter);
 app.use(express.static('build'));
 
 app.get('/public',(req,res) => {
-  	res.sendStatus(200);
+	res.sendStatus(200);
 })
 
 // App Set //
@@ -37,23 +37,23 @@ const PORT = process.env.PORT || 3000;
 
 const dbConnect = async () => {
 
-  try {
+	try {
 
-    balanceData();
-
-
-    const connOptions = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    };
-  
-    await mongoose.connect('mongodb://thomas123:Snickerdoodle37@binancebotdb-shard-00-00.rntaw.mongodb.net:27017,binancebotdb-shard-00-01.rntaw.mongodb.net:27017,binancebotdb-shard-00-02.rntaw.mongodb.net:27017/binanceBot?replicaSet=atlas-tbrsua-shard-0&ssl=true&authSource=admin', connOptions);
-
-    console.log('DB connected')
-
-  } catch(error) {
-    console.log(error);
-  }
+		balanceData();
+	
+	
+		const connOptions = {
+		  useNewUrlParser: true,
+		  useUnifiedTopology: true
+		};
+	  
+		await mongoose.connect('mongodb://thomas123:Snickerdoodle37@binancebotdb-shard-00-00.rntaw.mongodb.net:27017,binancebotdb-shard-00-01.rntaw.mongodb.net:27017,binancebotdb-shard-00-02.rntaw.mongodb.net:27017/binanceBot?replicaSet=atlas-tbrsua-shard-0&ssl=true&authSource=admin', connOptions);
+	
+		console.log('DB connected')
+	
+	  } catch(error) {
+		console.log(error);
+	  }
 
 
 }
