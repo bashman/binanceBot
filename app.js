@@ -6,7 +6,9 @@ const app = express();
 const bodyParser = require('body-parser');
 var cors = require('cors')
 
+// scripts / modules
 const balanceData = require('./server/scripts/balanceData');
+const getRSIData = require('./server/scripts/alphaVTest');
 
 // Route includes
 
@@ -16,12 +18,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // router imports
-const userRouter = require('./server/routes/balance.router')
+const userRouter = require('./server/routes/balance.router');
+const indicatorRouter = require('./server/routes/indicator.router');
 
 app.use(cors())
 
 /* Routes */
 app.use('/api/user', userRouter);
+app.use('/api/indicator',indicatorRouter);
 // app.use('/sms', smsRouter);
 // app.use('/cards', cardsRouter)
 
@@ -31,6 +35,8 @@ app.use(express.static('build'));
 app.get('/public',(req,res) => {
 	res.sendStatus(200);
 })
+
+// getRSIData();
 
 // App Set //
 const PORT = process.env.PORT || 3000;

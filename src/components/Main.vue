@@ -1,8 +1,9 @@
 <template>
     <v-container v-if="dataCollection" class="mainContainer">
-        <LineChart :chart-data="dataCollection" :css-classes="'chart'" :options="{responsive: true, maintainAspectRatio: false}"/>
-        
+        <BarChart :chart-data="dataCollection" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
+
         <v-row>
+        
             <v-col>
                 <v-radio-group v-model="chartCurrency">
                     <v-radio
@@ -17,49 +18,29 @@
             </v-col>
         </v-row>
 
+        <StochRSI />
     </v-container >
 </template>
 
 <script>
 import axios from 'axios';
-// import moment from 'moment';
-import LineChart from './LineChart.js';
-// import { uuid } from 'vue-uuid'
+import moment from 'moment';
+import BarChart from './charts/BarChart.js';
+import StochRSI from './StochRSI.vue';
 
 export default {
     components: {
-        LineChart
+        BarChart,
+        StochRSI
     },
     data() {
         return {
             balanceData: null,
             dataCollection:null,
-            // dataCollection: {
-            //     labels:['1','2','3','4'],
-            //     datasets:[
-            //         {
-            //             stack: '1',
-            //             label: 'today',
-            //             backgroundColor: '#FF6633',
-            //             data: [1,1,1,1]
-            //         },
-            //         {
-            //             stack: '1',
-            //             label: 'today',
-            //             backgroundColor: '#FFB399',
-            //             data: [1,2,3,4]
-            //         },
-            //         {
-            //             stack: '1',
-            //             label: 'today',
-            //             backgroundColor: '#FF33FF',
-            //             data: [2,2,2,2]
-            //         },
-            //     ]
-            // },
             chartCurrency: 'BTC',
-            colorArray: ['#ff584d','#ff944d','#6bbd59','#59bdab','#595ebd','#b359bd','#babd59','#59acbd','#9c59bd'],
-            coinColors: {}
+            colorArray: null,
+            coinColors: {},
+            chartData: {}
         }
     },
     async created() {
@@ -82,52 +63,38 @@ export default {
         structureChartData() {
 
             let newData = {
-                labels:['whatever','whatever'],
+                labels:[],
                 datasets: []
             }
 
-            let allAssets = {};
-
-            // newData.labels.push(moment.utc(balances.createdAt).local().format('MMM Do YY'));
 
             this.balanceData.forEach(balances => {
 
-                balances.assets.forEach(asset => {
-                    if (allAssets[asset.symbol]) {
+                newData.labels.push(moment.utc(balances.createdAt).local().format('MMM Do YY'));
 
-                        if (this.chartCurrency === 'BTC') {
-                            allAssets[asset.symbol].push(Math.round(1000 * asset.balanceBTC) / 1000);
-                        } else {
-                            allAssets[asset.symbol].push(Math.round(asset.balanceUSD));
-                        }
-                    } else {
-                        if (this.chartCurrency === 'BTC') {
-                            allAssets[asset.symbol] = [Math.round(1000 * asset.balanceBTC) / 1000]
-                        } else {
-                            allAssets[asset.symbol] = [Math.round(1000 * asset.balanceUSD) / 1000]
-                        }
+                        
+                for (const assetStored in this.chartData) {
+                    let assetExistsInBalance = false;
+                    balances.assets.forEach(asset => {
+                        if (asset.symbol === assetStored) {
+                            if (this.chartCurrency === 'BTC') {
+                                this.chartData[asset.symbol].push(Math.round(1000 * asset.balanceBTC) / 1000);
+                            } else {
+                                this.chartData[asset.symbol].push(Math.round(asset.balanceUSD));
+                            }
 
+                            assetExistsInBalance = true;
+                        }            
+                    });
+
+                    if (!assetExistsInBalance) {
+                        this.chartData[assetStored].push(0);
                     }
-                })
-
-                // let stackID = uuid.v1();
-
-                // balances.assets.forEach(asset => {
-                //     let dataset = {
-                //         stack: stackID,
-                //         backgroundColor: this.coinColors[asset.symbol],
-                //         data: []
-                //     };
-
-
-
-
-                //     newData.datasets.push(dataset);
-                //     // console.log(dataset)
-                // })
+                }
             })
 
-            for (const symbol in allAssets) {
+            for (const symbol in this.chartData) {
+
                 
 
                 let dataset = {
@@ -137,49 +104,57 @@ export default {
                      data: []
                  };
 
-                allAssets[symbol].forEach(amount => {
+                this.chartData[symbol].forEach(amount => {
                     dataset.data.push(amount);
                 })
 
                 newData.datasets.push(dataset)
             }
 
-            console.log(newData)
-
             this.dataCollection = newData;
-            // console.log(newData)
         },
         assignCoinColors(balances) {
 
+            this.colorArray = ['#ff584d','#ff944d','#6bbd59','#59bdab','#595ebd','#b359bd','#babd59','#59acbd','#9c59bd'];
+
             let mostAssetsBalance = {};
+            let mostAssets = 0;
             balances.forEach(balance => {
-                if (balance.assets.length > 0) {
+                if (balance.assets.length > mostAssets) {
                     mostAssetsBalance = balance;
+                    mostAssets = balance.assets.length;
                 }
             });
 
             for (const asset of mostAssetsBalance.assets) {
+
+                this.chartData[asset.symbol] = [];
                 this.coinColors[asset.symbol] = this.colorArray.pop();
             }
 
         }
     },
+    computed: {
+        chartStyles() {
+            return {
+                height: '400px',
+                width:'95vw',
+                paddingLeft:'30px'
+            }
+        }
+    },
     watch: {
         chartCurrency() {
-            this.structureChartData();
+            this.getBalanceData();
         }
     }
 }
 </script>
 
 <style scoped>
-.chart {
-    background-color:rgb(226, 226, 226) !important;
-    /* padding: 0 0 10px 0 */
-    width:100vw;
-}
 
 .mainContainer {
-    margin:0
+    margin:0;
+    width:100vw;
 }
 </style>

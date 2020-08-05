@@ -8,17 +8,10 @@ export default {
   mounted () {
     // this.chartData is created in the mixin.
     // If you want to pass options please create a local options object
+
+    this.$refs.canvas.height = '300px'
+
     this.renderChart(this.chartData, {
-      legend: {
-        display: false
-      },
-      tooltips: {
-          callbacks: {
-            label: function(tooltipItem) {
-                    return tooltipItem.yLabel;
-            }
-          }
-      },
       scales: {
           xAxes: [{
               stacked: true
