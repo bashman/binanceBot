@@ -8,7 +8,6 @@ const binance = new Binance().options({
   APISECRET: process.envBINANCE_SECRET_KEY
 });
 
-
 var Indicators = require('technicalindicators');
 
 
@@ -23,11 +22,14 @@ router.get('/stochrsi', async(req,res) => {
                 let closes = ticks.map(tick => tick[4]);
                 let timestamps = ticks.map(tick => tick[0]);
 
-                let stochrsi = await Indicators.StochasticRSI.calculate({values: closes, rsiPeriod: 14, stochasticPeriod: 14, kPeriod:3, dPeriod:3});
-
-                console.log(stochrsi.length)
                 
-                console.log(stochrsi[stochrsi.length-1])
+
+                let stochrsi = await Indicators.StochasticRSI.calculate({
+                    values: closes, rsiPeriod: 14, 
+                    stochasticPeriod: 14, 
+                    kPeriod:5, 
+                    dPeriod:2
+                });
 
                 timestamps.splice(0, timestamps.length - stochrsi.length)
 

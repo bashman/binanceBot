@@ -48,7 +48,6 @@ export default {
 			}
 		},
 		structureChartData(data) {
-			
 			this.chartData = {
 				labels: data.timestamps.map(timestamp => moment.utc(timestamp).local().format('h:mm a')),
 				datasets: [

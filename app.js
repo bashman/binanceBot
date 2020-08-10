@@ -8,7 +8,8 @@ var cors = require('cors')
 
 // scripts / modules
 const balanceData = require('./server/scripts/balanceData');
-const getRSIData = require('./server/scripts/alphaVTest');
+const tradingScript = require('./server/scripts/trading');
+tradingScript();
 
 // Route includes
 

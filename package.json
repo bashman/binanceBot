@@ -14,7 +14,9 @@
   "main": "app.js",
   "dependencies": {
     "alphavantage": "^2.1.0",
+    "average": "^0.1.0",
     "axios": "^0.19.2",
+    "binance": "^1.3.5",
     "body-parser": "^1.19.0",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
@@ -35,6 +37,7 @@
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-uuid": "^2.0.2",
+    "vue-websocket": "^0.2.3",
     "vuetify": "^2.2.11"
   },
   "devDependencies": {
