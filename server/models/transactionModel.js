@@ -4,9 +4,10 @@ const { Schema } = mongoose;
 
 const transactionSchema = new Schema({
     uuid: String,
+    symbol: String,
     type: String,
-    price: Number,
-    amount: Number
+    price: String,
+    quantity: String
 }, { strict: false, timestamps: true });
 
 const accountDb = mongoose.model('transactions', transactionSchema)

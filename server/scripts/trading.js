@@ -1,17 +1,19 @@
 const axios = require("axios");
+const uuid = require('uuid');
 const Average = require('average');
+const schedule = require('node-schedule');
 
-const Binance = require('node-binance-api');
+const Binance = require('node-binance-us-api');
 const binance = new Binance().options({
-  APIKEY: process.env.BINANCE_API_KEY,
-  APISECRET: process.env.BINANCE_SECRET_KEY
+  APIKEY: process.env.BOT_API_KEY,
+  APISECRET: process.env.BOT_SECRET_KEY
 });
 
 
 const binance2 = require('binance');
 
 
-const binanceWS = new binance2.BinanceWS(true);
+// const binanceWS = new binance2.BinanceWS(true);
 
 
 // binanceWS.ticker('BTCUSDT', data => {
@@ -27,7 +29,7 @@ const trading = async() => {
     try {
 
         const symbol = 'BTCUSDT'
-        binance.candlesticks(symbol, "1d", async (error, ticks, symbol) => {
+        binance.candlesticks(symbol, "4h", async (error, ticks, symbol) => {
             try {
 
                 // let [time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored] = last_tick;
@@ -51,6 +53,8 @@ const trading = async() => {
                 closes.splice(0, closes.length - macd.length);
                 stochrsi.splice(0, stochrsi.length - macd.length);
                 timestamps.splice(0, timestamps.length - macd.length);
+
+                await createTrade(stochrsi);
 
 
                 let buyCount = 0;
@@ -79,12 +83,12 @@ const trading = async() => {
                         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'})
                         buys.push(closes[i]);
                     } 
-                    else if ( i > 0 && stochrsi[i].k < stochrsi[i-1].k && stochrsi[i-1].k < 20 & stochrsi[i-1].d < 20) {
+                    else if ( i > 1 && stochrsi[i].k < stochrsi[i-1].k && stochrsi[i-1].k < 20 & stochrsi[i-1].d < 20) {
                         buyCount++;
 
                         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'});
                         buys.push(closes[i]);
-                    } else if (latestK < latestD && latestK < 80 && latestD < 80) {
+                    } else if (latestK < latestD && latestK > 80 && latestD > 80) {
                         sellCount++;
                         // sell
 
@@ -117,4 +121,74 @@ const trading = async() => {
     }
 }
 
-module.exports = trading;
+const createTrade = async (stochRSI) => {
+
+    // antepenK
+
+    let penultK = stochRSI[stochRSI.length-2].k;
+    let penultD = stochRSI[stochRSI.length-2].d;
+
+    let latestK = stochRSI[stochRSI.length-1].k;
+    let latestD = stochRSI[stochRSI.length-1].d;
+
+    console.log(latestK,latestD);
+
+    let response = null;
+
+    let recentTransaction = await transactionsDB.findOne(
+        {createdAt: { // 20 minutes ago (from now)
+            $gte: new Date().getTime()-(20*60*1000)
+        }}).limit(1).sort({ createdAt:-1})
+
+
+    try {
+        if (!recentTransaction) {
+
+            if ((latestK >= latestD ) 
+            && latestK < 20 
+            && latestD < 20) {
+                // buy
+
+                response = await binance.marketBuy("BTCUSDT", .0033);
+            } else if (latestK < penultK && penultD < 20 && latestD < 20) {
+                // buy
+
+                response = await binance.marketBuy("BTCUSDT", .0033);
+            } else if (latestK < latestD && latestK > 80 && latestD > 80) {
+                // sell
+                response = await binance.marketSell("BTCUSDT", .0033);
+            } else {
+                console.log('no trade');
+                // response = await binance.marketSell("BTCUSDT", .0033);
+            }
+
+            if (response) {
+                await transactionsDB.create({
+                    uuid: uuid.v1(),
+                    symbol: response.symbol,
+                    type: response.side,
+                    price: response.fills[0].price,
+                    quantity: response.executedQty
+                });
+            }
+
+        }
+
+
+
+    } catch(error) {
+        console.log(error)
+    }
+
+}
+
+
+const runScript = () => {
+    // schedule.scheduleJob('0 */2 * * *', function(){
+        trading();
+    //   });
+}
+
+
+
+module.exports = runScript;

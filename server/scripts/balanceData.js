@@ -6,7 +6,7 @@ const uuid = require('uuid');
 
 const accountDB = require('../models/balancesModel');
 
-const { BINANCE_API_KEY } = process.env;
+const { BOT_API_KEY } = process.env;
 
 
 const balanceData = async () => {
@@ -28,7 +28,7 @@ const balanceData = async () => {
                 signature,
             },
             headers: {
-                "X-MBX-APIKEY": BINANCE_API_KEY
+                "X-MBX-APIKEY": BOT_API_KEY
             }
         });
 
@@ -65,7 +65,7 @@ const calcBalance = async (balances) => {
             symbol: `BTCUSDT`
         },
         headers: {
-            "X-MBX-APIKEY": BINANCE_API_KEY
+            "X-MBX-APIKEY": BOT_API_KEY
         }
     });
 
@@ -87,7 +87,7 @@ const calcBalance = async (balances) => {
                         ...reqParams,
                     },
                     headers: {
-                        "X-MBX-APIKEY": BINANCE_API_KEY
+                        "X-MBX-APIKEY": BOT_API_KEY
                     }
                 });
 
