@@ -184,9 +184,9 @@ const createTrade = async (stochRSI) => {
 
 
 const runScript = () => {
-    // schedule.scheduleJob('0 */2 * * *', function(){
+    schedule.scheduleJob('0 */2 * * *', function(){
         trading();
-    //   });
+      });
 }
 
 
