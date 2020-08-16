@@ -6,37 +6,21 @@ const uuid = require('uuid');
 
 const accountDB = require('../models/balancesModel');
 
-const { BOT_API_KEY } = process.env;
+const { BOT_API_KEY, BOT_SECRET_KEY } = process.env;
 
+const Binance = require('node-binance-us-api');
+const binance = new Binance({
+  APIKEY: BOT_API_KEY,
+  APISECRET: BOT_SECRET_KEY,
+});
 
 const balanceData = async () => {
     try {
-        let date = new Date()
 
+        let balances = await binance.account();
 
-        const requestParams = {
-            timestamp: date.getTime()
-        };
-
-        const signature = sign(requestParams);
-
-        let response = await axios({
-            method:'GET',
-            url:`https://api.binance.com/api/v3/account`,
-            params:{
-                ...requestParams,
-                signature,
-            },
-            headers: {
-                "X-MBX-APIKEY": BOT_API_KEY
-            }
-        });
-
-        const { balanceBTC, balanceUSD, assets } = await calcBalance(response.data.balances)
-
-
-        
-        
+ 
+        const { balanceBTC, balanceUSD, assets } = await calcBalance(balances.balances)
 
         console.log('BALANCEBTC', balanceBTC);
         console.log('BALANCEBTC', balanceUSD);
@@ -58,66 +42,70 @@ const calcBalance = async (balances) => {
     let accountCoins = [];
 
 
-    let btcPriceResponse = await axios({
-        method:'GET',
-        url: 'https://api.binance.com/api/v3/ticker/price',
-        params: {
-            symbol: `BTCUSDT`
-        },
-        headers: {
-            "X-MBX-APIKEY": BOT_API_KEY
-        }
-    });
-
-    let btcPrice = btcPriceResponse.data.price;
+    const  { BTCUSDT: btcPrice} = await binance.prices('BTCUSDT');
 
 
     for (const coin of balances) {
         if (coin.free > 0) {
             try {
 
-                const reqParams =  {
-                    symbol: coin.asset === 'BTC' ? 'BTCUSDT' : `${coin.asset}BTC`
-                };
-                
-                let price = await axios({
-                    method:'GET',
-                    url: 'https://api.binance.com/api/v3/ticker/price',
-                    params: {
-                        ...reqParams,
-                    },
-                    headers: {
-                        "X-MBX-APIKEY": BOT_API_KEY
-                    }
-                });
+                let symbol;
 
-
-                if (coin.asset !== 'BTC') {
-                    balanceBTC += price.data.price * coin.free;
-
-                    accountCoins.push({
-                        symbol: coin.asset,
-                        balanceUSD: price.data.price * coin.free * btcPrice,
-                        balanceBTC: price.data.price * coin.free,
-                        priceUSD: price.data.price * btcPrice,
-                        priceBTC: price.data.price
-                    })
-
+                if (coin.asset === 'USDT') {
+                    symbol = 'USDT'
+                } else if ( coin.asset === 'BTC') {
+                    symbol = 'BTCUSDT'
                 } else {
-                    balanceBTC += Number(coin.free);
+                    symbol = `${coin.asset}BTC`
+                }
 
-                    accountCoins.push({
-                        symbol: coin.asset,
-                        balanceUSD: price.data.price * coin.free,
-                        balanceBTC: coin.free,
-                        priceUSD: btcPrice,
-                        priceBTC: 1
-                    })
+                let price;
+                if (symbol !== 'USDT') {
+                    price =  await binance.prices(symbol);
+                }
 
+
+                if (coin.free > .001) {
+                    if (coin.asset === 'USDT') {
+
+                        accountCoins.push({
+                            symbol: coin.asset,
+                            balanceUSD: coin.free,
+                            balanceBTC: coin.free / btcPrice,
+                            priceUSD: 1,
+                            priceBTC: 1 / btcPrice
+                        })
+
+                        balanceBTC += Number(coin.free / btcPrice);
+                        
+                    } else if (coin.asset !== 'BTC') {
+                        balanceBTC += price.data.price * coin.free;
+    
+                        accountCoins.push({
+                            symbol: coin.asset,
+                            balanceUSD: price.data.price * coin.free * btcPrice,
+                            balanceBTC: price.data.price * coin.free,
+                            priceUSD: price.data.price * btcPrice,
+                            priceBTC: price.data.price
+                        })
+    
+                    } else {
+    
+                        balanceBTC += Number(coin.free);
+    
+                        accountCoins.push({
+                            symbol: coin.asset,
+                            balanceUSD: price.data.price * coin.free,
+                            balanceBTC: coin.free,
+                            priceUSD: btcPrice,
+                            priceBTC: 1
+                        })
+    
+                    }
                 }
 
             } catch(error) {
-                console.log(error)
+                // console.log(error)
             }
         }
     };

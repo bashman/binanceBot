@@ -10,7 +10,6 @@ const binance = new Binance().options({
 });
 
 
-const binance2 = require('binance');
 
 
 // const binanceWS = new binance2.BinanceWS(true);
@@ -57,56 +56,56 @@ const trading = async() => {
                 await createTrade(stochrsi);
 
 
-                let buyCount = 0;
-                let sellCount = 0;
+                // let buyCount = 0;
+                // let sellCount = 0;
 
-                let transactions = [];
+                // let transactions = [];
 
-                let buys = [];
-                let trades = [];
+                // let buys = [];
+                // let trades = [];
 
-                for (let i=0; i< stochrsi.length; i++) {
-                    let stochData = stochrsi[i];
+                // for (let i=0; i< stochrsi.length; i++) {
+                //     let stochData = stochrsi[i];
                     
 
-                    let latestK = stochData.k;
-                    let latestD = stochData.d;
+                //     let latestK = stochData.k;
+                //     let latestD = stochData.d;
 
 
-                    if ((latestK >= latestD ) 
-                        && latestK < 20 
-                        && latestD < 20) {
-                        // buy
-                        buyCount++;
+                //     if ((latestK >= latestD ) 
+                //         && latestK < 20 
+                //         && latestD < 20) {
+                //         // buy
+                //         buyCount++;
 
                         
-                        // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'})
-                        buys.push(closes[i]);
-                    } 
-                    else if ( i > 1 && stochrsi[i].k < stochrsi[i-1].k && stochrsi[i-1].k < 20 & stochrsi[i-1].d < 20) {
-                        buyCount++;
+                //         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'})
+                //         buys.push(closes[i]);
+                //     } 
+                //     else if ( i > 1 && stochrsi[i].k < stochrsi[i-1].k && stochrsi[i-1].k < 20 & stochrsi[i-1].d < 20) {
+                //         buyCount++;
 
-                        // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'});
-                        buys.push(closes[i]);
-                    } else if (latestK < latestD && latestK > 80 && latestD > 80) {
-                        sellCount++;
-                        // sell
+                //         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'});
+                //         buys.push(closes[i]);
+                //     } else if (latestK < latestD && latestK > 80 && latestD > 80) {
+                //         sellCount++;
+                //         // sell
 
-                        // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'sell'})
+                //         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'sell'})
 
-                        if (buys[0]) {
-                            // console.log(closes[i]);
-                            // console.log(buys.pop())
-                            // console.log(closes[i] - buys.pop(), new Date(timestamps[i]).toISOString().slice(11, -1), closes[i]);
-                            // console.log(closes[i]);
-                            // console.log(buys.pop())
+                //         if (buys[0]) {
+                //             // console.log(closes[i]);
+                //             // console.log(buys.pop())
+                //             // console.log(closes[i] - buys.pop(), new Date(timestamps[i]).toISOString().slice(11, -1), closes[i]);
+                //             // console.log(closes[i]);
+                //             // console.log(buys.pop())
 
-                            trades.push(closes[i] - buys.pop())
-                        }
-                    }
-                }
+                //             trades.push(closes[i] - buys.pop())
+                //         }
+                //     }
+                // }
 
-                console.log(Average(trades))
+                // console.log(Average(trades))
                 // // // console.log(transactions.sort((a,b) => a.time > b.time ? 1 : -1))
                 // console.log(new Date().toISOString().slice(11, -1))
 
@@ -131,7 +130,7 @@ const createTrade = async (stochRSI) => {
     let latestK = stochRSI[stochRSI.length-1].k;
     let latestD = stochRSI[stochRSI.length-1].d;
 
-    console.log(latestK,latestD);
+    console.log('latest',latestK,latestD);
 
     let response = null;
 
@@ -140,6 +139,8 @@ const createTrade = async (stochRSI) => {
             $gte: new Date().getTime()-(20*60*1000)
         }}).limit(1).sort({ createdAt:-1})
 
+    
+        console.log(recentTransaction)
 
     try {
         if (!recentTransaction) {
@@ -170,6 +171,9 @@ const createTrade = async (stochRSI) => {
                     price: response.fills[0].price,
                     quantity: response.executedQty
                 });
+
+                console.log(response);
+
             }
 
         }
@@ -184,7 +188,7 @@ const createTrade = async (stochRSI) => {
 
 
 const runScript = () => {
-    schedule.scheduleJob('0 */2 * * *', function(){
+    schedule.scheduleJob('*/15 * * * *', function(){
         trading();
       });
 }

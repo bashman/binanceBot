@@ -10,7 +10,7 @@ const accountDB = require('../models/balancesModel');
 router.get('/balanceData', async (req, res) => {
 
     try {
-        let balanceData = await accountDB.find().sort({$natural:-1}).limit(20);
+        let balanceData = await accountDB.find().sort({$natural:-1}).limit(100);
 
         res.status(200).json(balanceData.reverse())
     } catch(error) {

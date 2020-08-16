@@ -9,7 +9,7 @@ var cors = require('cors')
 // scripts / modules
 const balanceData = require('./server/scripts/balanceData');
 const tradingScript = require('./server/scripts/trading');
-tradingScript();
+const backTestTrading = require('./server/scripts/backtest');
 
 // Route includes
 
@@ -45,8 +45,6 @@ const PORT = process.env.PORT || 3000;
 const dbConnect = async () => {
 
 	try {
-
-		balanceData();
 	
 	
 		const connOptions = {
@@ -57,6 +55,10 @@ const dbConnect = async () => {
 		await mongoose.connect('mongodb://thomas123:Snickerdoodle37@binancebotdb-shard-00-00.rntaw.mongodb.net:27017,binancebotdb-shard-00-01.rntaw.mongodb.net:27017,binancebotdb-shard-00-02.rntaw.mongodb.net:27017/binanceBot?replicaSet=atlas-tbrsua-shard-0&ssl=true&authSource=admin', connOptions);
 	
 		console.log('DB connected')
+		
+		balanceData();
+		tradingScript();
+		backTestTrading();
 	
 	  } catch(error) {
 		console.log(error);

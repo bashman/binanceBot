@@ -1,6 +1,6 @@
 const crypto = require('js-sha256')
 
-const { BINANCE_SECRET_KEY } = process.env;
+const { BOT_SECRET_KEY } = process.env;
 
 const sign = (params) => {
     let paramsString = '';
@@ -11,9 +11,8 @@ const sign = (params) => {
 
     paramsString = paramsString.substring(0, paramsString.length - 1);
 
-    console.log(paramsString)
 
-    var signature = crypto.hmac(BINANCE_SECRET_KEY, paramsString);
+    var signature = crypto.hmac(BOT_SECRET_KEY, paramsString);
 
     return signature;
 }
