@@ -19,7 +19,7 @@ const binance = new Binance().options({
 //     console.log(data);
 // });
 
-var Indicators = require('technicalindicators');
+const Indicators = require('technicalindicators');
 
 // DB
 const transactionsDB = require('../models/transactionModel');
@@ -113,7 +113,7 @@ const trading = async() => {
             } catch(error) {
                 console.log(error)
             }
-          }, {limit: 140});
+          }, {limit: 140, endTime: new Date().getTime()});
 
     }catch(error) {
         console.log(error)
