@@ -28,7 +28,7 @@ const trading = async() => {
     try {
 
         const symbol = 'BTCUSDT'
-        binance.candlesticks(symbol, "4h", async (error, ticks, symbol) => {
+        binance.candlesticks(symbol, "2h", async (error, ticks, symbol) => {
             try {
 
                 // let [time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored] = last_tick;
@@ -53,114 +53,62 @@ const trading = async() => {
                 stochrsi.splice(0, stochrsi.length - macd.length);
                 timestamps.splice(0, timestamps.length - macd.length);
 
-                await createTrade(stochrsi);
+                const btcPrice = closes[closes.length - 1];
 
-
-                // let buyCount = 0;
-                // let sellCount = 0;
-
-                // let transactions = [];
-
-                // let buys = [];
-                // let trades = [];
-
-                // for (let i=0; i< stochrsi.length; i++) {
-                //     let stochData = stochrsi[i];
-                    
-
-                //     let latestK = stochData.k;
-                //     let latestD = stochData.d;
-
-
-                //     if ((latestK >= latestD ) 
-                //         && latestK < 20 
-                //         && latestD < 20) {
-                //         // buy
-                //         buyCount++;
-
-                        
-                //         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'})
-                //         buys.push(closes[i]);
-                //     } 
-                //     else if ( i > 1 && stochrsi[i].k < stochrsi[i-1].k && stochrsi[i-1].k < 20 & stochrsi[i-1].d < 20) {
-                //         buyCount++;
-
-                //         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'buy'});
-                //         buys.push(closes[i]);
-                //     } else if (latestK < latestD && latestK > 80 && latestD > 80) {
-                //         sellCount++;
-                //         // sell
-
-                //         // transactions.push({price: closes[i], time: new Date(timestamps[i]).toISOString().slice(11, -1), type: 'sell'})
-
-                //         if (buys[0]) {
-                //             // console.log(closes[i]);
-                //             // console.log(buys.pop())
-                //             // console.log(closes[i] - buys.pop(), new Date(timestamps[i]).toISOString().slice(11, -1), closes[i]);
-                //             // console.log(closes[i]);
-                //             // console.log(buys.pop())
-
-                //             trades.push(closes[i] - buys.pop())
-                //         }
-                //     }
-                // }
-
-                // console.log(Average(trades))
-                // // // console.log(transactions.sort((a,b) => a.time > b.time ? 1 : -1))
-                // console.log(new Date().toISOString().slice(11, -1))
-
+                await createTrade(stochrsi, btcPrice);
 
             } catch(error) {
                 console.log(error)
             }
-          }, {limit: 140, endTime: new Date().getTime()});
+          }, {limit: 140});
 
     }catch(error) {
         console.log(error)
     }
 }
 
-const createTrade = async (stochRSI) => {
+const createTrade = async (stochRSI, btcPrice) => {
 
-    // antepenK
+    
+    const { balances } = await binance.account();
 
-    let penultK = stochRSI[stochRSI.length-2].k;
-    let penultD = stochRSI[stochRSI.length-2].d;
+    const { free: btcBalance } = balances.find( asset => asset.asset === 'BTC');
+    const { free: usdBalance } = balances.find( asset => asset.asset === 'USDT');
 
-    let latestK = stochRSI[stochRSI.length-1].k;
-    let latestD = stochRSI[stochRSI.length-1].d;
+    const penultK = stochRSI[stochRSI.length-2].k;
+    const penultD = stochRSI[stochRSI.length-2].d;
 
-    console.log('latest',latestK,latestD);
+    const latestK = stochRSI[stochRSI.length-1].k;
+    const latestD = stochRSI[stochRSI.length-1].d;
+
+    console.log('latest', latestK, latestD);
 
     let response = null;
 
-    let recentTransaction = await transactionsDB.findOne(
+    const recentTransaction = await transactionsDB.findOne(
         {createdAt: { // 20 minutes ago (from now)
             $gte: new Date().getTime()-(20*60*1000)
         }}).limit(1).sort({ createdAt:-1})
 
-    
-        console.log(recentTransaction)
-
     try {
         if (!recentTransaction) {
 
-            if ((latestK >= latestD ) 
-            && latestK < 20 
-            && latestD < 20) {
+            const buyAmount = (usdBalance / 10) / close;
+            const sellAmount = (btcBalace / 10);
+
+            if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > .0033 * btcPrice)) {
                 // buy
 
                 response = await binance.marketBuy("BTCUSDT", .0033);
-            } else if (latestK < penultK && penultD < 20 && latestD < 20) {
+            } else if (latestK < penultK && penultD < 20 && latestD < 20 && (usdBalance > .0033 * btcPrice)) {
                 // buy
 
                 response = await binance.marketBuy("BTCUSDT", .0033);
-            } else if (latestK < latestD && latestK > 80 && latestD > 80) {
+            } else if (latestK < latestD && latestK > 80 && latestD > 80 && btcBalance > .0033) {
                 // sell
                 response = await binance.marketSell("BTCUSDT", .0033);
             } else {
                 console.log('no trade');
-                // response = await binance.marketSell("BTCUSDT", .0033);
             }
 
             if (response) {
@@ -188,7 +136,7 @@ const createTrade = async (stochRSI) => {
 
 
 const runScript = () => {
-    schedule.scheduleJob('*/15 * * * *', function(){
+    schedule.scheduleJob('0 */2 * * *', function(){
         trading();
       });
 }
