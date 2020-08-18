@@ -11,18 +11,11 @@ const binance = new Binance().options({
 
 
 
-
-// const binanceWS = new binance2.BinanceWS(true);
-
-
-// binanceWS.ticker('BTCUSDT', data => {
-//     console.log(data);
-// });
-
 const Indicators = require('technicalindicators');
 
 // DB
 const transactionsDB = require('../models/transactionModel');
+
 
 const trading = async() => {
     try {
@@ -85,60 +78,50 @@ const createTrade = async (stochRSI, btcPrice) => {
 
     let response = null;
 
-    const recentTransaction = await transactionsDB.findOne(
-        {createdAt: { // 20 minutes ago (from now)
-            $gte: new Date().getTime()-(20*60*1000)
-        }}).limit(1).sort({ createdAt:-1})
-
     try {
-        if (!recentTransaction) {
 
-            const buyAmount = (usdBalance / 10) / close;
-            const sellAmount = (btcBalace / 10);
+        let buyAmount = (usdBalance / 10) / btcPrice;
+        buyAmount = Number(buyAmount).toFixed(4)
+        const sellAmount = (btcBalance / 10);
 
-            if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
-                // buy
+        if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
+            // buy
 
-                response = await binance.marketBuy("BTCUSDT", buyAmount);
-            } else if (latestK < penultK && penultD < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
-                // buy
+            response = await binance.marketBuy("BTCUSDT", buyAmount);
+        } else if (latestK < penultK && penultD < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
+            // buy
 
-                response = await binance.marketBuy("BTCUSDT", buyAmount);
-            } else if (latestK < latestD && latestK > 80 && latestD > 80 && btcBalance > sellAmount) {
-                // sell
-                response = await binance.marketSell("BTCUSDT", sellAmount);
-            } else {
-                console.log('no trade');
-            }
-
-            if (response) {
-                await transactionsDB.create({
-                    uuid: uuid.v1(),
-                    symbol: response.symbol,
-                    type: response.side,
-                    price: response.fills[0].price,
-                    quantity: response.executedQty
-                });
-
-                console.log(response);
-
-            }
-
+            response = await binance.marketBuy("BTCUSDT", buyAmount);
+        } else if (latestK < latestD && latestK > 80 && latestD > 80 && btcBalance > sellAmount) {
+            // sell
+            response = await binance.marketSell("BTCUSDT", sellAmount);
+        } else {
+            console.log('no trade');
         }
 
+        if (response) {
+            await transactionsDB.create({
+                uuid: uuid.v1(),
+                symbol: response.symbol,
+                type: response.side,
+                price: response.fills[0].price,
+                quantity: response.executedQty
+            });
 
+            console.log(response);
+        }
 
     } catch(error) {
-        console.log(error)
+        // console.log(error)
     }
 
 }
 
 
 const runScript = () => {
-    schedule.scheduleJob('0 */2 * * *', function(){
+    schedule.scheduleJob('0 */2 * * *', function() {
         trading();
-      });
+    });
 }
 
 

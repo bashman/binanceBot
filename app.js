@@ -19,14 +19,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // router imports
-const userRouter = require('./server/routes/balance.router');
+const accountRouter = require('./server/routes/account.router');
 const indicatorRouter = require('./server/routes/indicator.router');
 
 app.use(cors())
 
 /* Routes */
-app.use('/api/user', userRouter);
-app.use('/api/indicator',indicatorRouter);
+app.use('/api/account', accountRouter);
+app.use('/api/indicator', indicatorRouter);
 // app.use('/sms', smsRouter);
 // app.use('/cards', cardsRouter)
 
