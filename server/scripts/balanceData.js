@@ -23,11 +23,11 @@ const balanceData = async () => {
         const { balanceBTC, balanceUSD, assets } = await calcBalance(balances.balances)
 
         console.log('BALANCEBTC', balanceBTC);
-        console.log('BALANCEBTC', balanceUSD);
+        console.log('BALANCEUSD', balanceUSD);
         console.log('ASSETS', assets);
 
 
-        await accountDB.create({ uuid: uuid.v1(), balanceBTC, balanceUSD, assets })
+        // await accountDB.create({ uuid: uuid.v1(), balanceBTC, balanceUSD, assets })
 
     } catch(error) {
         console.log(error)
@@ -61,12 +61,13 @@ const calcBalance = async (balances) => {
 
                 let price;
                 if (symbol !== 'USDT') {
-                    price =  await binance.prices(symbol);
+                    price = await binance.prices(symbol);
                 }
 
 
                 if (coin.free > .001) {
                     if (coin.asset === 'USDT') {
+                        // usd
 
                         accountCoins.push({
                             symbol: coin.asset,
@@ -79,6 +80,7 @@ const calcBalance = async (balances) => {
                         balanceBTC += Number(coin.free / btcPrice);
                         
                     } else if (coin.asset !== 'BTC') {
+                        // alt coin
                         balanceBTC += price.data.price * coin.free;
     
                         accountCoins.push({
@@ -90,12 +92,12 @@ const calcBalance = async (balances) => {
                         })
     
                     } else {
-    
+                        // btc
                         balanceBTC += Number(coin.free);
-    
+
                         accountCoins.push({
                             symbol: coin.asset,
-                            balanceUSD: price.data.price * coin.free,
+                            balanceUSD: btcPrice * coin.free,
                             balanceBTC: coin.free,
                             priceUSD: btcPrice,
                             priceBTC: 1
@@ -105,7 +107,7 @@ const calcBalance = async (balances) => {
                 }
 
             } catch(error) {
-                // console.log(error)
+                console.log(error)
             }
         }
     };

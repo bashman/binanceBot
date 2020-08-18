@@ -86,17 +86,17 @@ const backTestTrading = async () => {
         }
     })
     
-    console.log('\n\n')
-    console.log('********** Final Account Balances ***********');
-    console.log('Total Balance - $', totalBalance);
-    console.log('BTC Balance - ', balanceBTC + ' BTC');
-    console.log('USD Balance- $', balanceUSD);
-    console.log('Total Balance Increase:', totalBalance - startingBalance);
-    console.log('\n\n');
-    console.log('********** Trading Stats ***********');
-    console.log('Total Buys - ', buyCounter);
-    console.log('Total Sells - ', sellCounter);
-    console.log('Total No-Trades', noTradeCounter);
+    // console.log('\n\n')
+    // console.log('********** Final Account Balances ***********');
+    // console.log('Total Balance - $', totalBalance);
+    // console.log('BTC Balance - ', balanceBTC + ' BTC');
+    // console.log('USD Balance- $', balanceUSD);
+    // console.log('Total Balance Increase:', totalBalance - startingBalance);
+    // console.log('\n\n');
+    // console.log('********** Trading Stats ***********');
+    // console.log('Total Buys - ', buyCounter);
+    // console.log('Total Sells - ', sellCounter);
+    // console.log('Total No-Trades', noTradeCounter);
 
 
 
