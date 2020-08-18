@@ -96,17 +96,17 @@ const createTrade = async (stochRSI, btcPrice) => {
             const buyAmount = (usdBalance / 10) / close;
             const sellAmount = (btcBalace / 10);
 
-            if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > .0033 * btcPrice)) {
+            if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
                 // buy
 
-                response = await binance.marketBuy("BTCUSDT", .0033);
-            } else if (latestK < penultK && penultD < 20 && latestD < 20 && (usdBalance > .0033 * btcPrice)) {
+                response = await binance.marketBuy("BTCUSDT", buyAmount);
+            } else if (latestK < penultK && penultD < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
                 // buy
 
-                response = await binance.marketBuy("BTCUSDT", .0033);
-            } else if (latestK < latestD && latestK > 80 && latestD > 80 && btcBalance > .0033) {
+                response = await binance.marketBuy("BTCUSDT", buyAmount);
+            } else if (latestK < latestD && latestK > 80 && latestD > 80 && btcBalance > sellAmount) {
                 // sell
-                response = await binance.marketSell("BTCUSDT", .0033);
+                response = await binance.marketSell("BTCUSDT", sellAmount);
             } else {
                 console.log('no trade');
             }
