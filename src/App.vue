@@ -1,6 +1,5 @@
 <template>
     <v-app>
-
       <Main />
     </v-app>
 </template>

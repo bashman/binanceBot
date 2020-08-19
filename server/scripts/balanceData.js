@@ -27,7 +27,7 @@ const balanceData = async () => {
         console.log('ASSETS', assets);
 
 
-        // await accountDB.create({ uuid: uuid.v1(), balanceBTC, balanceUSD, assets })
+        await accountDB.create({ uuid: uuid.v1(), balanceBTC, balanceUSD, assets })
 
     } catch(error) {
         console.log(error)

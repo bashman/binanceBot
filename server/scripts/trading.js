@@ -112,7 +112,7 @@ const createTrade = async (stochRSI, btcPrice) => {
         }
 
     } catch(error) {
-        // console.log(error)
+        console.log(error)
     }
 
 }

@@ -8,12 +8,23 @@ const balancesDB = require('../models/balancesModel');
 const transactionsDB = require('../models/transactionModel');
 
 
-router.get('/balances', async (req, res) => {
-
+router.get('/balances/:timeframe', async (req, res) => {
     try {
-        let balanceData = await balancesDB.find().sort({$natural:-1}).limit(100);
+    
+        const { timeframe } = req.params;
 
-        res.status(200).json(balanceData.reverse())
+        let balanceData;
+
+        if (timeframe === '2h') {
+            balanceData = await balancesDB.find().sort({$natural: -1}).limit(30);
+            balanceData.reverse();
+        } else if (timeframe === '1d') {
+            console.log('here')
+            balanceData = await balancesDB.find().sort({$natural:-1}).limit(30 * 12);
+            balanceData = balanceData.filter((balance, i) => i % 12 === 0).reverse();
+        }
+
+        res.status(200).json(balanceData)
     } catch(error) {
         console.log(error)
     }

@@ -1,20 +1,32 @@
 <template>
-    <div>
-        <Balances />
-        <StochRSI />
-    </div>
+    <v-row >
+        <v-col cols="2" class="noPadding">
+            <Navbar />
+        </v-col>
+        <v-col cols="10" class="noPadding dark">
+            <router-view></router-view>
+        </v-col>
+    </v-row>
   
 </template>
 
 <script>
-import Balances from './Balances';
-import StochRSI from './StochRSI.vue';
+import Navbar from './Navbar';
 
 export default {
-    components: { Balances, StochRSI }
+    components: { Navbar }
 }
 </script>
 
 <style>
+
+.noPadding {
+	padding:0 0 0 0 !important;
+	margin:0 0 0 0 !important;
+}
+
+.dark {
+	background-color: rgb(36, 36, 36);
+}
 
 </style>

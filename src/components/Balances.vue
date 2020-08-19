@@ -1,25 +1,42 @@
 <template>
-    <v-container v-if="dataCollection" class="mainContainer">
-        <BarChart :chart-data="dataCollection" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
-
+    <div v-if="dataCollection">
         <v-row>
         
-            <v-col>
-                <v-radio-group v-model="chartCurrency">
-                    <v-radio
-                        label="BTC"
-                        value="BTC"
-                    ></v-radio>
-                    <v-radio
-                        label="USD"
-                        value="USD"
-                    ></v-radio>
-                </v-radio-group>
+            <v-col cols="12">
+                <v-row>
+                    <v-col cols="2">
+                        <v-radio-group v-model="chartCurrency">
+                            <v-radio
+                                label="BTC"
+                                value="BTC"
+                            ></v-radio>
+                            <v-radio
+                                label="USD"
+                                value="USD"
+                            ></v-radio>
+                        </v-radio-group>
+                    </v-col>
+                    <v-col cols="2">
+                        <v-radio-group v-model="timeframe">
+                            <v-radio
+                                label="2h"
+                                value="2h"
+                            ></v-radio>
+                            <v-radio
+                                label="1d"
+                                value="1d"
+                            ></v-radio>
+                        </v-radio-group>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12">
+                <BarChart :chart-data="dataCollection" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
             </v-col>
         </v-row>
+        
 
-
-    </v-container >
+    </div >
 </template>
 
 <script>
@@ -36,6 +53,7 @@ export default {
             balanceData: null,
             dataCollection:null,
             chartCurrency: 'BTC',
+            timeframe: '2h',
             colorArray: null,
             coinColors: {},
             chartData: {}
@@ -47,7 +65,7 @@ export default {
     methods: {
         async getBalanceData() {
             try {
-                let { data } = await axios.get('http://localhost:3000/api/account/balances');
+                let { data } = await axios.get(`http://localhost:3000/api/account/balances/${this.timeframe}`);
 
                 this.balanceData = data
 
@@ -135,14 +153,15 @@ export default {
     computed: {
         chartStyles() {
             return {
-                height: '400px',
-                width:'95vw',
-                paddingLeft:'30px'
+                height: '400px'
             }
         }
     },
     watch: {
         chartCurrency() {
+            this.getBalanceData();
+        },
+        timeframe() {
             this.getBalanceData();
         }
     }
@@ -151,8 +170,4 @@ export default {
 
 <style scoped>
 
-.mainContainer {
-    margin:0;
-    width:100vw;
-}
 </style>

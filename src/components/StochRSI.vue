@@ -96,9 +96,7 @@ export default {
 	computed: {
         chartStyles() {
             return {
-                height: '400px',
-                width:'95vw',
-                paddingLeft:'30px'
+                height: '400px'
             }
         }
     },
