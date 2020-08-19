@@ -16,11 +16,10 @@ router.get('/balances/:timeframe', async (req, res) => {
         let balanceData;
 
         if (timeframe === '2h') {
-            balanceData = await balancesDB.find().sort({$natural: -1}).limit(30);
+            balanceData = await balancesDB.find().sort({$natural: -1}).limit(20);
             balanceData.reverse();
         } else if (timeframe === '1d') {
-            console.log('here')
-            balanceData = await balancesDB.find().sort({$natural:-1}).limit(30 * 12);
+            balanceData = await balancesDB.find().sort({$natural:-1}).limit(20 * 12);
             balanceData = balanceData.filter((balance, i) => i % 12 === 0).reverse();
         }
 

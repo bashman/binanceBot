@@ -4,8 +4,11 @@
         
             <v-col cols="12">
                 <v-row>
-                    <v-col cols="2">
-                        <v-radio-group v-model="chartCurrency">
+					<v-col cols="12">
+						<BarChart :chart-data="dataCollection" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
+					</v-col>
+                    <v-col cols="1">
+                        <v-radio-group v-model="chartCurrency" dark>
                             <v-radio
                                 label="BTC"
                                 value="BTC"
@@ -16,8 +19,8 @@
                             ></v-radio>
                         </v-radio-group>
                     </v-col>
-                    <v-col cols="2">
-                        <v-radio-group v-model="timeframe">
+                    <v-col cols="1">
+                        <v-radio-group v-model="timeframe" dark>
                             <v-radio
                                 label="2h"
                                 value="2h"
@@ -28,10 +31,11 @@
                             ></v-radio>
                         </v-radio-group>
                     </v-col>
+					<v-col cols="4">
+						<div class="doughnutTitle">Current Balance: {{ this.chartCurrency === 'BTC' ? this.accountBalance + ' BTC' : '$ ' + this.accountBalance  }}</div>
+						<DoughnutChart :chart-data="doughnutData" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
+					</v-col>
                 </v-row>
-            </v-col>
-            <v-col cols="12">
-                <BarChart :chart-data="dataCollection" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
             </v-col>
         </v-row>
         
@@ -43,14 +47,27 @@
 import axios from 'axios';
 import moment from 'moment';
 import BarChart from './charts/BarChart.js';
+import DoughnutChart from './charts/DoughnutChart.js';
 
 export default {
     components: {
-        BarChart
+		BarChart,
+		DoughnutChart
     },
     data() {
         return {
-            balanceData: null,
+			doughnutData: {
+				labels:['BTC','ADA'],
+				datasets: [
+					{
+						label: ['BTC','ADA'],
+						backgroundColor: ['red','blue'],
+						data: [1000,90]
+					},
+				]
+			},
+			balanceData: null,
+			accountBalance: null,
             dataCollection:null,
             chartCurrency: 'BTC',
             timeframe: '2h',
@@ -70,12 +87,44 @@ export default {
                 this.balanceData = data
 
                 this.assignCoinColors(this.balanceData);
-                this.structureChartData(this.balanceData);
+				this.structureDougnutData(this.balanceData[this.balanceData.length - 1]);
+				this.structureChartData(this.balanceData);
+
+				if (this.chartCurrency === 'BTC') {
+					this.accountBalance = this.balanceData[this.balanceData.length - 1]['balanceBTC'].toFixed(3)
+				} else {
+					this.accountBalance = this.balanceData[this.balanceData.length - 1]['balanceUSD'].toFixed(2)
+				}
 
             }catch(error) {
                 console.log(error);
             }
-        },
+		},
+		structureDougnutData(balances) {
+			console.log(balances)
+
+			let chartData = {
+				labels: [],
+				datasets: [{
+					label: 'ASSETS',
+					backgroundColor: [],
+					data:[]
+				}]
+			};
+			
+			balances.assets.forEach(asset => {
+				chartData.labels.push(asset.symbol)
+
+				chartData.datasets[0].data.push(
+					this.chartCurrency === 'BTC' ? asset.balanceBTC : asset.balanceUSD
+				)
+
+				chartData.datasets[0].backgroundColor.push( this.coinColors[asset.symbol]);
+			})
+
+
+			this.doughnutData = chartData;
+		},
         structureChartData() {
 
             let newData = {
@@ -153,7 +202,8 @@ export default {
     computed: {
         chartStyles() {
             return {
-                height: '400px'
+				height: '400px',
+				width: '98%'
             }
         }
     },
@@ -169,5 +219,12 @@ export default {
 </script>
 
 <style scoped>
+
+.doughnutTitle {
+	color:rgb(207, 207, 207);
+	font-family: 'Nunito';
+	text-align: center;
+	font-size: 25px;
+}
 
 </style>

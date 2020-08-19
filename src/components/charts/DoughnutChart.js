@@ -1,8 +1,8 @@
-import { Bar, mixins } from 'vue-chartjs';
+import { Doughnut, mixins } from 'vue-chartjs';
 const { reactiveProp } = mixins;
 
 export default {
-  extends: Bar,
+  extends: Doughnut,
   mixins: [reactiveProp],
   props: ['options'],
   mounted () {
@@ -11,14 +11,5 @@ export default {
 
     this.$refs.canvas.height = '300px'
 
-    this.renderChart(this.chartData, {
-      scales: {
-          xAxes: [{
-              stacked: true
-          }],
-          yAxes: [{
-              stacked: true
-          }]
-      }
-  })
+    this.renderChart(this.chartData, {});
 }}
