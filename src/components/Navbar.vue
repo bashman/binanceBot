@@ -1,14 +1,38 @@
 <template>
 	<div class="NavContainer">
 		<v-row class="NavBar">
-			<v-col @click="routeTo('balances')" cols="12" :style="tabStyling('balances')">
-				Balances
+			<v-col cols="12">
+				<v-row @click="routeTo('/balances')" :style="tabStyling('/balances')" >
+					<v-spacer></v-spacer>
+					<v-col cols="7" class="NavTab" >
+						<span>Balances</span>
+					</v-col>
+					<v-col cols="3" class="iconContainer">
+						<v-icon :color="iconColor('/balances')">fas fa-balance-scale-right</v-icon> 
+					</v-col>
+				</v-row>
 			</v-col>
-			<v-col @click="routeTo('transactions')" cols="12" :style="tabStyling('transactions')">
-				<span>Transactions</span>
+			<v-col cols="12">
+				<v-row @click="routeTo('/transactions')" :style="tabStyling('/transactions')">
+					<v-spacer></v-spacer>
+					<v-col cols="7" class="NavTab" >
+						<span>Transactions</span>
+					</v-col>
+					<v-col cols="3" class="iconContainer">
+						<v-icon :color="iconColor('/transactions')">fas fa-dollar-sign</v-icon> 
+					</v-col>
+				</v-row>
 			</v-col>
-			<v-col @click="routeTo('stochrsi')" cols="12" :style="tabStyling('stochrsi')">
-				<span>StochRSI</span>
+			<v-col cols="12">
+				<v-row @click="routeTo('/stochrsi')" :style="tabStyling('/stochrsi')">
+					<v-spacer></v-spacer>
+					<v-col cols="7"  class="NavTab" >
+						<span>Stoch RSI</span>
+					</v-col>
+					<v-col cols="3" class="iconContainer">
+						<v-icon :color="iconColor('/stochrsi')">fas fa-chart-area</v-icon> 
+					</v-col>
+				</v-row>
 			</v-col>
 		</v-row>
 	</div>
@@ -19,7 +43,7 @@
 export default {
 	data() {
 		return {
-			currentTab: 'balances'
+			currentTab: this.$router.history.current.fullPath
 		}
 	},
 	methods: {
@@ -30,25 +54,28 @@ export default {
 		tabStyling(tab) {
 
 			let defaultCss = {
-				'color':'rgb(207, 207, 207)',
-				'text-align': 'center',
 				'font-family': 'Nunito',
-				'font-size': '20px',
+				'font-size': '18px',
 				'padding': '10px 0 10px 0',
 				'transition': '0.4s'
 			};
+
 			
 			if (tab === this.currentTab) {
 				return {
 					...defaultCss,
-					color:'rgb(27, 116, 0)'
+					color:'rgb(27, 116, 0)',
+					borderRight: '1px solid rgb(27, 116, 0)',
 				}
 			} else {
 				return {
 					...defaultCss,
-					color: 'rgb(207, 207, 207)'
+					color: 'antiquewhite'
 				}
 			}
+		},
+		iconColor(path) {
+			return this.currentTab === path ? 'rgb(27, 116, 0)' : 'rgb(250, 235, 215)';
 		}
 	}
 
@@ -58,7 +85,7 @@ export default {
 <style scoped>
 
 .NavContainer {
-	background-color: rgb(22, 22, 22);
+	background-color: rgb(36, 36, 36);
 	height:100vh;
 }
 
@@ -66,18 +93,13 @@ export default {
 	margin: 0 0 0 0 !important;
 }
 
-.NavTab {
-	color:rgb(207, 207, 207);
-	text-align: center;
-	font-family: 'Nunito';
-	font-size: 20px;
-	padding: 10px 0 10px 0;
-	transition: 0.3s;
+.NavTab:hover {
+	cursor: pointer;
+	color: rgb(147, 204, 131) !important;
 }
 
-.NavTab:hover {
-	color:rgb(27, 116, 0);
-	cursor: pointer;
+.iconContainer {
+	text-align: center;
 }
 
 </style>

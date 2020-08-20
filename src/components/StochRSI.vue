@@ -26,7 +26,7 @@ export default {
 
 				const { data } = await axios({
 					method:'GET',
-					url:'http://localhost:3000/api/indicator/stochrsi',
+					url:'/api/indicator/stochrsi',
 				})
 
 				this.stochRSIData = data;

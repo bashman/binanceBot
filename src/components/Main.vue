@@ -26,7 +26,7 @@ export default {
 }
 
 .main {
-	background-color: rgb(36, 36, 36);
+	background-color: rgb(22, 22, 22);
 	padding: 0 0 0 10px !important;
 }
 

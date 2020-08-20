@@ -82,7 +82,7 @@ export default {
     methods: {
         async getBalanceData() {
             try {
-                let { data } = await axios.get(`http://localhost:3000/api/account/balances/${this.timeframe}`);
+                let { data } = await axios.get(`/api/account/balances/${this.timeframe}`);
 
                 this.balanceData = data
 
