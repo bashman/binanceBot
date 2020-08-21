@@ -33,9 +33,35 @@ router.get('/balances/:timeframe', async (req, res) => {
 router.get('/transactions', async (req, res) => {
 
     try {
-        let transactions = await transactionsDB.find().sort({$natural:-1}).limit(100);
+		let transactions = await transactionsDB.find().sort({$natural:-1}).limit(15);
+		
 
-        res.status(200).json(transactions)
+		let statistics = {
+			numOfBuys: 0,
+			numOfSells: 0,
+			avgBuyPrice: 0,
+			avgSellPrice: 0,
+		}
+
+		let buyTotal = 0;
+		let sellTotal = 0;
+
+		transactions.forEach(transaction => {
+
+			if (transaction.type === 'BUY')  {
+				statistics.numOfBuys++;
+				buyTotal += Number(transaction.price);
+			}  else {
+				statistics.numOfSells++;
+				sellTotal += Number(transaction.price);
+			}
+		})
+
+		statistics.avgBuyPrice = buyTotal / statistics.numOfBuys;
+		statistics.avgSellPrice = sellTotal / statistics.numOfSells;
+
+
+        res.status(200).json({ transactions, statistics})
     } catch(error) {
         console.log(error)
     }

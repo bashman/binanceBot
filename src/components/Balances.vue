@@ -1,46 +1,42 @@
 <template>
-    <div v-if="dataCollection">
-        <v-row>
-        
-            <v-col cols="12">
-                <v-row>
-					<v-col cols="12">
-						<BarChart :chart-data="dataCollection" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
-					</v-col>
-                    <v-col cols="1">
-                        <v-radio-group v-model="chartCurrency" dark>
-                            <v-radio
-                                label="BTC"
-                                value="BTC"
-                            ></v-radio>
-                            <v-radio
-                                label="USD"
-                                value="USD"
-                            ></v-radio>
-                        </v-radio-group>
-                    </v-col>
-                    <v-col cols="1">
-                        <v-radio-group v-model="timeframe" dark>
-                            <v-radio
-                                label="2h"
-                                value="2h"
-                            ></v-radio>
-                            <v-radio
-                                label="1d"
-                                value="1d"
-                            ></v-radio>
-                        </v-radio-group>
-                    </v-col>
-					<v-col cols="4">
-						<div class="doughnutTitle">Current Balance: {{ this.chartCurrency === 'BTC' ? this.accountBalance + ' BTC' : '$ ' + this.accountBalance  }}</div>
-						<DoughnutChart :chart-data="doughnutData" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
-					</v-col>
-                </v-row>
-            </v-col>
-        </v-row>
-        
-
-    </div >
+	<v-row v-if="dataCollection">
+		<v-col cols="12">
+			<v-row>
+				<v-col cols="12">
+					<BarChart :chart-data="dataCollection" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
+				</v-col>
+				<v-col cols="1">
+					<v-radio-group v-model="chartCurrency" dark>
+						<v-radio
+							label="BTC"
+							value="BTC"
+						></v-radio>
+						<v-radio
+							label="USD"
+							value="USD"
+						></v-radio>
+					</v-radio-group>
+				</v-col>
+				<v-col cols="1">
+					<v-radio-group v-model="timeframe" dark>
+						<v-radio
+							label="2h"
+							value="2h"
+						></v-radio>
+						<v-radio
+							label="1d"
+							value="1d"
+						></v-radio>
+					</v-radio-group>
+				</v-col>
+				<v-col cols="4">
+					<div class="doughnutTitle">Current Balance: {{ this.chartCurrency === 'BTC' ? this.accountBalance + ' BTC' : '$ ' + this.accountBalance  }}</div>
+					<DoughnutChart :chart-data="doughnutData" :styles="chartStyles" :options="{responsive: true, maintainAspectRatio: false}"/>
+				</v-col>
+			</v-row>
+		</v-col>
+	</v-row>
+    
 </template>
 
 <script>
