@@ -2,6 +2,7 @@ const axios = require("axios");
 const uuid = require('uuid');
 const Average = require('average');
 const schedule = require('node-schedule');
+const moment = require('moment');
 
 const Binance = require('node-binance-us-api');
 const binance = new Binance().options({
@@ -44,11 +45,17 @@ const trading = async() => {
 
                 closes.splice(0, closes.length - macd.length);
                 stochrsi.splice(0, stochrsi.length - macd.length);
-                timestamps.splice(0, timestamps.length - macd.length);
+				timestamps.splice(0, timestamps.length - macd.length);
+				
+				stochrsi = stochrsi.map(stoch => { return {k: stoch.k.toFixed(2), d: stoch.d.toFixed(2), stochRSI: stoch.stochRSI }});
 
                 const btcPrice = closes[closes.length - 1];
 
-                await createTrade(stochrsi, btcPrice);
+				let latestTransaction = await transactionsDB.findOne({createdAt : {$gte: new Date().getTime()-(2 * 60 * 60 * 1000) }}).sort({$natural:-1});
+
+				if (!latestTransaction) {
+					await createTrade(stochrsi, btcPrice);
+				}
 
             } catch(error) {
                 console.log(error)
@@ -122,7 +129,7 @@ const createTrade = async (stochRSI, btcPrice) => {
 
 
 const runScript = () => {
-    schedule.scheduleJob('0 */2 * * *', function() {
+    schedule.scheduleJob('*/5 * * * *', function() {
         trading();
     });
 }
