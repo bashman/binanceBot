@@ -29,15 +29,15 @@ router.get('/stochrsi', async(req,res) => {
                     stochasticPeriod: 14, 
                     kPeriod:5, 
                     dPeriod:2
-                });
-
+				});
+				
                 timestamps.splice(0, timestamps.length - stochrsi.length)
 
                 res.send({timestamps: timestamps, stochrsi}).status(200);
             } catch(error) {
                 console.log(error)
             }
-          }, {limit: 140});
+          }, {limit: 70});
 
     }catch(error) {
         console.log(error)

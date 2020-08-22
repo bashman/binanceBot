@@ -97,7 +97,6 @@ export default {
             }
 		},
 		structureDougnutData(balances) {
-			console.log(balances)
 
 			let chartData = {
 				labels: [],
@@ -131,7 +130,7 @@ export default {
 
             this.balanceData.forEach(balances => {
 
-                newData.labels.push(moment.utc(balances.createdAt).local().format('MMM Do YY'));
+                newData.labels.push(moment.utc(balances.createdAt).local().format('MMM Do YY, HH:mm'));
 
                         
                 for (const assetStored in this.chartData) {

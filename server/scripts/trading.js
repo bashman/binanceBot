@@ -81,11 +81,11 @@ const createTrade = async (stochRSI, btcPrice) => {
     const latestK = stochRSI[stochRSI.length-1].k;
     const latestD = stochRSI[stochRSI.length-1].d;
 
-    console.log('latest', latestK, latestD);
+	console.log('latest', latestK, latestD);
+	console.log('usdBalance', usdBalance)
 
 	let response = null;
 	
-	console.log(usdBalance)
 
     try {
 
