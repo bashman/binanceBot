@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require("axios");
 const sign = require('../utils/signature');
 const uuid = require('uuid');
+const tokenVerify = require('./verify.router');
 
 const balancesDB = require('../models/balancesModel');
 const transactionsDB = require('../models/transactionModel');
@@ -57,8 +58,8 @@ router.get('/transactions', async (req, res) => {
 			}
 		})
 
-		statistics.avgBuyPrice = buyTotal / statistics.numOfBuys;
-		statistics.avgSellPrice = sellTotal / statistics.numOfSells;
+		statistics.avgBuyPrice = buyTotal / statistics.numOfBuys ? buyTotal / statistics.numOfBuys : 0;
+		statistics.avgSellPrice = sellTotal / statistics.numOfSells ? sellTotal / statistics.numOfSells : 0;
 
 
         res.status(200).json({ transactions, statistics})

@@ -1,14 +1,12 @@
 <template>
-    <v-template>
-		<v-row style="margin:0 0 0 0 !important;">
-			<v-col cols="2" class="noPadding">
-				<Navbar />
-			</v-col>
-			<v-col cols="10" class="main">
-				<router-view></router-view>
-			</v-col>
-		</v-row>
-	</v-template>
+	<v-row style="margin:0 0 0 0 !important;">
+		<v-col cols="2" class="noPadding" v-if="$store.state.user.loggedIn">
+			<Navbar />
+		</v-col>
+		<v-col cols="10" class="main">
+			<router-view></router-view>
+		</v-col>
+	</v-row>
   
 </template>
 

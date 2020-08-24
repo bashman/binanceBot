@@ -51,7 +51,7 @@ const trading = async() => {
 
                 const btcPrice = closes[closes.length - 1];
 
-				let latestTransaction = await transactionsDB.findOne({createdAt : {$gte: new Date().getTime()-(2 * 60 * 60 * 1000) }}).sort({$natural:-1});
+				let latestTransaction = await transactionsDB.findOne({createdAt : {$gt: new Date(Date.now()-(2 * 60 * 60 * 1000)) }});
 
 				if (!latestTransaction) {
 					await createTrade(stochrsi, btcPrice);
@@ -82,27 +82,26 @@ const createTrade = async (stochRSI, btcPrice) => {
     const latestD = stochRSI[stochRSI.length-1].d;
 
 	console.log('latest', latestK, latestD);
-	console.log('usdBalance', usdBalance)
+	console.log('usdBalance', usdBalance);
+	console.log('btcBalance', btcBalance);
 
 	let response = null;
 	
 
     try {
 
-        let buyAmount = (usdBalance / 10) / btcPrice;
-		buyAmount = Number(buyAmount).toFixed(4);
-		
-        const sellAmount = Number(btcBalance / 10).toFixed(4);
+        let buyAmount = Number((usdBalance / 10) / btcPrice).toFixed(4);
+		let sellAmount = Number(btcBalance / 10).toFixed(4);
 
-        if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
+        if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice) && buyAmount > .001) {
             // buy
 
             response = await binance.marketBuy("BTCUSDT", buyAmount);
-        } else if (latestK < penultK && penultD < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice)) {
+        } else if (latestK < penultK && penultD < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice) && buyAmount > .001 ) {
             // buy
 
             response = await binance.marketBuy("BTCUSDT", buyAmount);
-        } else if (latestK < latestD && latestK > 80 && latestD > 80 && btcBalance > sellAmount) {
+        } else if (latestK < latestD && latestK > 80 && latestD > 80 && btcBalance > sellAmount && sellAmount > .001) {
             // sell
             response = await binance.marketSell("BTCUSDT", sellAmount);
         } else {
@@ -122,7 +121,7 @@ const createTrade = async (stochRSI, btcPrice) => {
         }
 
     } catch(error) {
-        console.log(error)
+        console.log(error.body)
     }
 
 }

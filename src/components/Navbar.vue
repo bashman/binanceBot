@@ -34,6 +34,17 @@
 					</v-col>
 				</v-row>
 			</v-col>
+			<v-col cols="12">
+				<v-row @click="logout()">
+					<v-spacer></v-spacer>
+					<v-col cols="7"  class="NavTab" >
+						<span>Log out</span>
+					</v-col>
+					<v-col cols="3" class="iconContainer">
+						<v-icon :color="iconColor('/stochrsi')">fas fa-chart-area</v-icon> 
+					</v-col>
+				</v-row>
+			</v-col>
 		</v-row>
 	</div>
 
@@ -47,6 +58,10 @@ export default {
 		}
 	},
 	methods: {
+		logout() {
+			this.$router.push('/login');
+			this.$store.commit('clearAuth');
+		},
 		routeTo(route) {
 			this.currentTab = route;
 			this.$router.push(route);

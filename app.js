@@ -16,19 +16,19 @@ const backTestTrading = require('./server/scripts/backtest');
 // Body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors())
 
 
 // router imports
 const accountRouter = require('./server/routes/account.router');
 const indicatorRouter = require('./server/routes/indicator.router');
+const userRouter = require('./server/routes/user.router');
 
-app.use(cors())
 
 /* Routes */
 app.use('/api/account', accountRouter);
 app.use('/api/indicator', indicatorRouter);
-// app.use('/sms', smsRouter);
-// app.use('/cards', cardsRouter)
+app.use('/api/user', userRouter);
 
 // Serve static files
 app.use(express.static('build'));

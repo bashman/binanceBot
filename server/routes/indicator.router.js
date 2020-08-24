@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const axios = require("axios");
+const tokenVerify = require('./verify.router');
 
 const Binance = require('node-binance-us-api');
 const binance = new Binance().options({
