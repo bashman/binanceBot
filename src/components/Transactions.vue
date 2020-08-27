@@ -1,5 +1,5 @@
 <template>
-	<v-row style="margin:0 0 0 0 !important;">
+	<v-row style="margin:0 0 0 0 !important;" v-if="filteredTransactions.length">
 		<v-col cols="5">
 			<span class="transactionsHeader">Transaction History</span>
 		</v-col>
@@ -40,7 +40,7 @@
 						</v-row>
 					</v-col>
 					<v-col cols="12" class="px-0 pt-0">
-						<v-row v-for="transaction in filteredTransactions" :key="transaction.createdAt" class="tableRow" align-content="center">
+						<v-row v-for="transaction in filteredTransactions.slice(0 + 15 * page, 15 + 15 * page)" :key="transaction.createdAt" class="tableRow" align-content="center">
 							<v-col cols="1" class="tableCell" :style="color(transaction.type)">
 								{{ transaction.type }}
 							</v-col>
@@ -59,6 +59,13 @@
 						</v-row>
 					</v-col>
 				</v-row>
+				<v-row>
+					<v-col class="mx-3">
+						<v-icon class="mx-2" @click="previousSet()">fas fa-chevron-left</v-icon>
+						{{ this.page * 15 + 1 }} to {{ (this.page + 1) * 15 > filteredTransactions.length ? filteredTransactions.length : (this.page + 1) * 15  }}
+						<v-icon class="mx-2" @click="nextSet()">fas fa-chevron-right</v-icon>
+					</v-col>
+				</v-row>
 			</v-card>
 		</v-col>
 	</v-row>
@@ -75,7 +82,8 @@ export default {
 			filteredTransactions: [],
 			moment: moment,
 			transactionTypeFilter: 'ALL',
-			statistics: {}
+			statistics: {},
+			page: 0
 		}
 	},
 	methods: {
@@ -89,9 +97,25 @@ export default {
 			this.filteredTransactions = data.transactions;
 			this.transactions = data.transactions;
 			this.statistics = data.statistics;
+
+			console.log(this.transactions)
 		},
 		color(type) {
 			return type === 'BUY' ? { color: 'green' } : { color: 'red' };
+		},
+		previousSet() {
+			if (this.page == 0) {
+				// do nothing
+			} else {
+				this.page--;
+			}
+		},
+		nextSet() {
+			if (this.page >= Math.floor( this.filteredTransactions.length / 15)) {
+				// do nothing
+			} else {
+				this.page++;
+			}
 		}
 	},
 	created() {

@@ -11,6 +11,10 @@ const balanceData = require('./server/scripts/balanceData');
 const tradingScript = require('./server/scripts/trading');
 const backTestTrading = require('./server/scripts/backtest');
 
+balanceData();
+tradingScript();
+backTestTrading();
+
 // Route includes
 
 // Body parser middleware
@@ -52,14 +56,10 @@ const dbConnect = async () => {
 		  useUnifiedTopology: true
 		};
 	  
-		await mongoose.connect('mongodb://thomas123:Snickerdoodle37@binancebotdb-shard-00-00.rntaw.mongodb.net:27017,binancebotdb-shard-00-01.rntaw.mongodb.net:27017,binancebotdb-shard-00-02.rntaw.mongodb.net:27017/binanceBot?replicaSet=atlas-tbrsua-shard-0&ssl=true&authSource=admin', connOptions);
+		await mongoose.connect(`mongodb://thomas123:${process.env.DB_PASSWORD}@binancebotdb-shard-00-00.rntaw.mongodb.net:27017,binancebotdb-shard-00-01.rntaw.mongodb.net:27017,binancebotdb-shard-00-02.rntaw.mongodb.net:27017/binanceBot?replicaSet=atlas-tbrsua-shard-0&ssl=true&authSource=admin`, connOptions);
 	
 		console.log('DB connected')
 		
-		balanceData();
-		tradingScript();
-		backTestTrading();
-	
 	  } catch(error) {
 		console.log(error);
 	  }

@@ -34,7 +34,7 @@ router.get('/balances/:timeframe', async (req, res) => {
 router.get('/transactions', async (req, res) => {
 
     try {
-		let transactions = await transactionsDB.find().sort({$natural:-1}).limit(15);
+		let transactions = await transactionsDB.find().sort({$natural:-1});
 		
 
 		let statistics = {

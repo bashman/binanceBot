@@ -34,14 +34,16 @@
 					</v-col>
 				</v-row>
 			</v-col>
-			<v-col cols="12">
-				<v-row @click="logout()">
-					<v-spacer></v-spacer>
+		</v-row>
+		<v-row style="height:100%">
+			<v-col cols="2" style="position: absolute !important; bottom: 0 !important;">
+				<v-row :style="tabStyling('/sdfsdf')" @click="logout()">
+				<v-spacer></v-spacer>
 					<v-col cols="7"  class="NavTab" >
 						<span>Log out</span>
 					</v-col>
 					<v-col cols="3" class="iconContainer">
-						<v-icon :color="iconColor('/stochrsi')">fas fa-chart-area</v-icon> 
+						<v-icon :color="iconColor('/stochrsi')">fas fa-sign-out-alt</v-icon> 
 					</v-col>
 				</v-row>
 			</v-col>

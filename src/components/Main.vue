@@ -3,7 +3,7 @@
 		<v-col cols="2" class="noPadding" v-if="$store.state.user.loggedIn">
 			<Navbar />
 		</v-col>
-		<v-col cols="10" class="main">
+		<v-col :cols="$store.state.user.loggedIn ? 10 : 12" class="main">
 			<router-view></router-view>
 		</v-col>
 	</v-row>

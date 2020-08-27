@@ -21,8 +21,10 @@ const transactionsDB = require('../models/transactionModel');
 const trading = async() => {
     try {
 
+		console.log(new Date().toUTCString())
+
         const symbol = 'BTCUSDT'
-        binance.candlesticks(symbol, "2h", async (error, ticks, symbol) => {
+        await binance.candlesticks(symbol, "2h", async (error, ticks, symbol) => {
             try {
 
                 // let [time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored] = last_tick;
@@ -52,9 +54,10 @@ const trading = async() => {
                 const btcPrice = closes[closes.length - 1];
 
 				let latestTransaction = await transactionsDB.findOne({createdAt : {$gt: new Date(Date.now()-(2 * 60 * 60 * 1000)) }});
-
 				if (!latestTransaction) {
 					await createTrade(stochrsi, btcPrice);
+				} else {
+					console.log('2 hour dead period')
 				}
 
             } catch(error) {
@@ -117,7 +120,7 @@ const createTrade = async (stochRSI, btcPrice) => {
                 quantity: response.executedQty
             });
 
-            console.log(response);
+            console.log('transaction response', response);
         }
 
     } catch(error) {
@@ -129,6 +132,7 @@ const createTrade = async (stochRSI, btcPrice) => {
 
 const runScript = () => {
     schedule.scheduleJob('*/5 * * * *', function() {
+		console.log('scheduler')
         trading();
     });
 }
