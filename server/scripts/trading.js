@@ -61,12 +61,12 @@ const trading = async() => {
 				}
 
             } catch(error) {
-                console.log(error)
+                console.log(error.body)
             }
           }, {limit: 140});
 
     }catch(error) {
-        console.log(error)
+        console.log(error.body)
     }
 }
 

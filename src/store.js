@@ -26,8 +26,6 @@ export default new Vuex.Store({
 				loggedIn: !!localStorage.getItem('token'),
 				token: localStorage.getItem('token'),
 			};
-
-			console.log(localStorage.token);
 		},
 		clearAuth(state) {
 			state.user = {

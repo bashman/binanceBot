@@ -35,12 +35,12 @@ export default {
 				const { data: token } = await axios.post('/api/user/login', { username: this.username, password: this.password});
 
 				localStorage.token = token;
+
 				let userData = jwt.decode(token);
 
 				this.$store.commit('updateAuth', userData);
 				this.$router.push('/balances');
 
-				console.log(this.$store.state)
 
 			} catch(error) {
 				console.log(error);
@@ -49,6 +49,10 @@ export default {
 		}
 	},
 	created() {
+
+		if (this.$store.state.user.loggedIn) {
+			this.$router.push('/balances');
+		}
 	}
 }
 </script>
