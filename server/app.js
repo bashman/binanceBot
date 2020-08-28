@@ -11,8 +11,11 @@ const balanceData = require('./scripts/balanceData');
 const tradingScript = require('./scripts/trading');
 const backTestTrading = require('./scripts/backtest');
 
-balanceData();
-tradingScript();
+if (process.env.NODE_ENV === 'production') {
+	balanceData();
+	tradingScript();
+}
+
 backTestTrading();
 
 // Route includes

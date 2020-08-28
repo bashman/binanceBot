@@ -1,10 +1,12 @@
 <template>
 	<v-row>
 		<v-col v-if="!register">
-			<input v-model="username" type="text" style="backgroundColor: white !important;">
-			<input v-model="password" type="password" style="backgroundColor: white !important;">
+			<input v-model="username" type="text" style="backgroundColor: white !important; margin: 5px;" >
+			<br/>
+			<input v-model="password" type="password" style="backgroundColor: white !important; margin: 5px;">
+			<br/>
 			<v-btn @click="login()">Login</v-btn>
-			<v-btn @click="register = true;"> Register </v-btn>
+			<!-- <v-btn @click="register = true;"> Register </v-btn> -->
 		</v-col>
 		<v-col v-else>
 			<Signup />
