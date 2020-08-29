@@ -90,7 +90,10 @@ export default {
 		async getTransactionData() {
 			const { data } = await axios({
 				method: 'GET',
-				url: '/api/account/transactions'
+				url: '/api/account/transactions',
+				headers: {
+					authToken: this.$store.state.user.token
+				}
 			});
 
 
@@ -98,7 +101,7 @@ export default {
 			this.transactions = data.transactions;
 			this.statistics = data.statistics;
 
-			console.log(this.transactions)
+			// console.log(this.transactions)
 		},
 		color(type) {
 			return type === 'BUY' ? { color: 'green' } : { color: 'red' };

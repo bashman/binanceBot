@@ -9,7 +9,7 @@ const balancesDB = require('../models/balancesModel');
 const transactionsDB = require('../models/transactionModel');
 
 
-router.get('/balances/:timeframe', async (req, res) => {
+router.get('/balances/:timeframe', tokenVerify, async (req, res) => {
     try {
     
         const { timeframe } = req.params;
@@ -31,7 +31,7 @@ router.get('/balances/:timeframe', async (req, res) => {
 
 });
 
-router.get('/transactions', async (req, res) => {
+router.get('/transactions', tokenVerify, async (req, res) => {
 
     try {
 		let transactions = await transactionsDB.find().sort({$natural:-1});

@@ -78,7 +78,14 @@ export default {
     methods: {
         async getBalanceData() {
             try {
-                let { data } = await axios.get(`/api/account/balances/${this.timeframe}`);
+				
+				let { data } = await axios({
+					method:'GET',
+					url: `/api/account/balances/${this.timeframe}`,
+					headers: {
+						authToken: this.$store.state.user.token
+					}
+				})
 
                 this.balanceData = data
 

@@ -12,7 +12,7 @@ const binance = new Binance().options({
 var Indicators = require('technicalindicators');
 
 
-router.get('/stochrsi', async(req,res) => {
+router.get('/stochrsi', tokenVerify, async(req,res) => {
     try {
         binance.candlesticks("BTCUSDT", "2h", async (error, ticks, symbol) => {
             try {

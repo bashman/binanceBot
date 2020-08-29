@@ -27,6 +27,9 @@ export default {
 				const { data } = await axios({
 					method:'GET',
 					url:'/api/indicator/stochrsi',
+					headers: {
+						authToken: this.$store.state.user.token
+					}
 				})
 
 				this.stochRSIData = data;
