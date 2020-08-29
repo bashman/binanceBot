@@ -1,10 +1,10 @@
 const express = require('express');
-require('dotenv').config();
 const mongoose = require('mongoose');
-
+const axios = require('axios');
 const app = express();
 const bodyParser = require('body-parser');
-var cors = require('cors')
+const cors = require('cors')
+require('dotenv').config();
 
 // scripts / modules
 const balanceData = require('./scripts/balanceData');
