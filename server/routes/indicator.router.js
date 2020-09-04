@@ -26,7 +26,8 @@ router.get('/stochrsi', tokenVerify, async(req,res) => {
 
 
                 let stochrsi = await Indicators.StochasticRSI.calculate({
-                    values: closes, rsiPeriod: 14, 
+					values: closes,
+					rsiPeriod: 14, 
                     stochasticPeriod: 14, 
                     kPeriod:5, 
                     dPeriod:2
@@ -38,7 +39,7 @@ router.get('/stochrsi', tokenVerify, async(req,res) => {
             } catch(error) {
                 console.log(error)
             }
-          }, {limit: 70});
+          }, {limit: 140});
 
     }catch(error) {
         console.log(error)

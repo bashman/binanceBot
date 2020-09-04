@@ -96,6 +96,14 @@ const createTrade = async (stochRSI, btcPrice) => {
         let buyAmount = Number((usdBalance / 10) / btcPrice).toFixed(4);
 		let sellAmount = Number(btcBalance / 10).toFixed(4);
 
+		if (usdBalance >=  .001 * btcPrice) {
+			buyAmount = buyAmount > .001 ? buyAmount : .001 
+		}
+
+		if (btcBalance >= .001) {
+			sellAmount = sellAmount > .001 ? sellAmount : .001 
+		}
+
         if (latestK >= latestD  && latestK < 20 && latestD < 20 && (usdBalance > buyAmount * btcPrice) && buyAmount > .001) {
             // buy
 
