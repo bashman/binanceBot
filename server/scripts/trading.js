@@ -53,11 +53,11 @@ const trading = async() => {
 
                 const btcPrice = closes[closes.length - 1];
 
-				let latestTransaction = await transactionsDB.findOne({createdAt : {$gt: new Date(Date.now()-(2 * 60 * 60 * 1000)) }});
+				let latestTransaction = await transactionsDB.findOne({createdAt : {$gt: new Date(Date.now()-(4 * 60 * 60 * 1000)) }});
 				if (!latestTransaction) {
 					await createTrade(stochrsi, btcPrice);
 				} else {
-					console.log('2 hour dead period')
+					console.log('4 hour dead period')
 				}
 
             } catch(error) {
