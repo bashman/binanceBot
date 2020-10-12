@@ -14,7 +14,7 @@ const backTestTrading = async () => {
 
     let ticks2 = [];
     let candles;
-    let timeFrame = '2h'
+    let timeFrame = '4h'
 
     for (let i=2; i >= 0; i--) {
         candles = await binance.candlesticks("BTCUSDT", timeFrame, null, {limit: 1000, endTime: time - (1000 * 60 * 60 * timeFrame[0] * 1000 * i)});

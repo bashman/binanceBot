@@ -24,7 +24,7 @@ const trading = async() => {
 		console.log(new Date().toUTCString())
 
         const symbol = 'BTCUSDT'
-        await binance.candlesticks(symbol, "2h", async (error, ticks, symbol) => {
+        await binance.candlesticks(symbol, "4h", async (error, ticks, symbol) => {
             try {
 
                 // let [time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored] = last_tick;

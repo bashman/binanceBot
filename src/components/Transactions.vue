@@ -23,8 +23,6 @@
 			<v-row>
 				<v-col cols="6" class="statContainer pb-0"> Total # of Buys: <div>{{ statistics.numOfBuys }}</div></v-col>
 				<v-col cols="6" class="statContainer pb-0"> Total # of Sells: <div>{{ statistics.numOfSells }}</div> </v-col>
-				<v-col cols="6" class="statContainer pb-0"> Average Buy Price: <div>$ {{ statistics.avgBuyPrice.toFixed(2) }}</div></v-col>
-				<v-col cols="6" class="statContainer pb-0"> Average Sell Price: <div>$ {{ statistics.avgSellPrice.toFixed(2) }}</div></v-col>
 			</v-row>
 		</v-col>
 		<v-col cols="12" class="pt-0">

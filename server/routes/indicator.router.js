@@ -14,7 +14,7 @@ var Indicators = require('technicalindicators');
 
 router.get('/stochrsi', tokenVerify, async(req,res) => {
     try {
-        binance.candlesticks("BTCUSDT", "2h", async (error, ticks, symbol) => {
+        binance.candlesticks("BTCUSDT", "4h", async (error, ticks, symbol) => {
             try {
 
                 // let [time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored] = last_tick;
@@ -39,7 +39,7 @@ router.get('/stochrsi', tokenVerify, async(req,res) => {
             } catch(error) {
                 console.log(error)
             }
-          }, {limit: 140});
+          }, {limit: 110});
 
     }catch(error) {
         console.log(error)
